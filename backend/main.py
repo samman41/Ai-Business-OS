@@ -5,9 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from backend.database import init_db, SessionLocal, Product
-from backend.seed_data import seed_database
-from backend.routers import dashboard, customers, inventory, sales, documents, ai_assistant, reports
+from database import init_db, SessionLocal, Product
+from seed_data import seed_database
+from routers import dashboard, customers, inventory, sales, documents, ai_assistant, reports
 
 # Initialize App & Tables
 init_db()
