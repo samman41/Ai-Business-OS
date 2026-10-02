@@ -46,6 +46,10 @@ const API = {
     return this.fetchJSON(`${API_BASE}/customers/${id}/generate-summary`, { method: "POST" });
   },
 
+  generateCustomerEmail(id) {
+    return this.fetchJSON(`${API_BASE}/customers/${id}/generate-email`, { method: "POST" });
+  },
+
   createCustomer(data) {
     return this.fetchJSON(`${API_BASE}/customers`, {
       method: "POST",

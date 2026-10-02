@@ -337,6 +337,44 @@ def process_ai_query(payload: QueryRequest, db: Session = Depends(get_db)):
     order_count = db.query(func.count(Order.id)).scalar() or 0
     total_rev = db.query(func.sum(Order.total_amount)).scalar() or 0.0
 
+    if api_key:
+        import requests
+        system_prompt = f"""You are the AURA AI Business Operating System Assistant.
+You are helping the CEO analyze their business.
+Current database stats:
+- Active Customers: {customer_count}
+- Product SKUs: {product_count}
+- Lifetime Orders: {order_count}
+- Gross Recorded Sales: ${total_rev:,.2f}
+Provide a professional, concise, and helpful response in markdown."""
+        try:
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            data = {
+                "model": "gpt-3.5-turbo",
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": query}
+                ],
+                "temperature": 0.7,
+                "max_tokens": 500
+            }
+            response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                ai_text = result["choices"][0]["message"]["content"]
+                return {
+                    "query": query,
+                    "mode": "OpenAI LLM Integration",
+                    "response_markdown": f"### 🧠 AI Analysis\n\n{ai_text}",
+                }
+            else:
+                fallback_msg = f"API Error: {response.status_code}"
+        except Exception as e:
+            fallback_msg = str(e)
+    
     response_md = f"### 🤖 AI Business Assistant\n\n"
     response_md += f"Analysis of your request: *\"{query}\"*\n\n"
     response_md += (
@@ -346,6 +384,8 @@ def process_ai_query(payload: QueryRequest, db: Session = Depends(get_db)):
         f"- Lifetime Orders: `{order_count}`\n"
         f"- Gross Recorded Sales: `${total_rev:,.2f}`\n\n"
     )
+    if api_key:
+        response_md += f"> ⚠️ **Note**: Tried to use OpenAI but encountered an error: {fallback_msg}\n\n"
     response_md += (
         "You can ask me specific questions such as:\n"
         "- *'Which products are not selling?'*\n"

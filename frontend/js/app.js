@@ -244,10 +244,22 @@ async function openCustomerDetail(id) {
       <div style="margin-bottom: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <strong style="font-size: 14px; color: var(--text-dark);"><i class="fa-solid fa-brain" style="color: var(--gold-primary);"></i> AI Persona Summary</strong>
-          <button class="btn btn-outline-gold btn-sm" onclick="refreshAISummary(${c.id})"><i class="fa-solid fa-rotate"></i> Refresh AI</button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-outline-gold btn-sm" onclick="draftAIEmail(${c.id})"><i class="fa-solid fa-envelope"></i> Draft AI Email</button>
+            <button class="btn btn-outline-gold btn-sm" onclick="refreshAISummary(${c.id})"><i class="fa-solid fa-rotate"></i> Refresh AI</button>
+          </div>
         </div>
         <div id="ai-summary-text" style="padding: 14px; background: #FAF7F0; border-left: 3px solid var(--gold-primary); font-size: 13px; color: var(--text-body); border-radius: 6px;">
           ${c.ai_summary || 'No AI summary generated.'}
+        </div>
+      </div>
+      
+      <div id="ai-email-container" style="display: none; margin-bottom: 20px;">
+        <strong style="font-size: 14px; color: var(--text-dark); display: block; margin-bottom: 8px;"><i class="fa-solid fa-envelope-open-text" style="color: var(--gold-primary);"></i> AI Drafted Email</strong>
+        <div style="padding: 14px; background: #FFF; border: 1px solid var(--gold-border); border-radius: 6px;">
+            <strong style="font-size: 13px; color: var(--text-dark);">Subject: </strong><span id="ai-email-subject" style="font-size: 13px;"></span>
+            <hr style="margin: 8px 0; border: 0; border-top: 1px solid #EEE;">
+            <pre id="ai-email-body" style="font-size: 13px; color: var(--text-body); font-family: inherit; white-space: pre-wrap; margin: 0;"></pre>
         </div>
       </div>
 

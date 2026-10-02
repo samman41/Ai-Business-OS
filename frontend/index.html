@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Business Operating System | Enterprise Platform</title>
-
+  
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap"
-    rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  
   <!-- Markdown Parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
+  
   <!-- jsPDF & html2canvas for PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -29,7 +26,6 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
 </head>
-
 <body>
 
   <div id="app">
@@ -130,8 +126,7 @@
                   <i class="fa-solid fa-bolt"></i> Live AI Insights
                 </div>
               </div>
-              <div id="dashboard-insights-list"
-                style="display: flex; flex-direction: column; gap: 14px; max-height: 320px; overflow-y: auto;">
+              <div id="dashboard-insights-list" style="display: flex; flex-direction: column; gap: 14px; max-height: 320px; overflow-y: auto;">
                 <!-- Rendered by JS -->
               </div>
             </div>
@@ -146,8 +141,7 @@
                 <i class="fa-solid fa-address-book"></i> Customer CRM Directory
               </div>
               <div style="display: flex; gap: 12px;">
-                <input type="text" class="chat-input" id="customer-search-input"
-                  placeholder="Search by name, company or email..." style="width: 280px;">
+                <input type="text" class="chat-input" id="customer-search-input" placeholder="Search by name, company or email..." style="width: 280px;">
                 <button class="btn btn-gold" id="btn-add-customer-modal">
                   <i class="fa-solid fa-user-plus"></i> Add Customer
                 </button>
@@ -186,8 +180,7 @@
                 <i class="fa-solid fa-boxes-packing"></i> Product Catalog & Stock Health
               </div>
               <div style="display: flex; gap: 12px;">
-                <input type="text" class="chat-input" id="inventory-search-input"
-                  placeholder="Search products or SKU..." style="width: 260px;">
+                <input type="text" class="chat-input" id="inventory-search-input" placeholder="Search products or SKU..." style="width: 260px;">
                 <button class="btn btn-gold" id="btn-add-product-modal">
                   <i class="fa-solid fa-plus"></i> Add Product
                 </button>
@@ -276,8 +269,7 @@
                   <div class="dropzone" id="doc-dropzone">
                     <i class="fa-solid fa-file-pdf dropzone-icon"></i>
                     <p style="font-weight: 600; color: var(--text-dark);">Click or drag PDF / Docs here</p>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Supports PDF, TXT, MD, CSV
-                      files</p>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Supports PDF, TXT, MD, CSV files</p>
                     <input type="file" id="doc-file-input" style="display: none;" accept=".pdf,.txt,.md,.json,.csv">
                   </div>
                   <div class="form-group" style="margin-top: 16px;">
@@ -299,8 +291,7 @@
                   <i class="fa-solid fa-magnifying-glass"></i> AI RAG Document Search
                 </div>
                 <div style="display: flex; gap: 8px;">
-                  <input type="text" class="chat-input" id="doc-search-query"
-                    placeholder="Search terms in uploaded PDFs...">
+                  <input type="text" class="chat-input" id="doc-search-query" placeholder="Search terms in uploaded PDFs...">
                   <button class="btn btn-gold" id="btn-doc-search"><i class="fa-solid fa-search"></i></button>
                 </div>
                 <div id="doc-search-results" style="margin-top: 14px;"></div>
@@ -347,15 +338,12 @@
           <div class="chat-container">
             <div class="chat-messages" id="chat-messages-log">
               <div class="message-bubble assistant">
-                <strong style="color: var(--gold-dark);"><i class="fa-solid fa-crown"></i> AURA AI
-                  Assistant:</strong><br>
-                Welcome to your AI Business Operating System. Ask any question about your revenue, inventory stock, top
-                clients, or risk alerts.
+                <strong style="color: var(--gold-dark);"><i class="fa-solid fa-crown"></i> AURA AI Assistant:</strong><br>
+                Welcome to your AI Business Operating System. Ask any question about your revenue, inventory stock, top clients, or risk alerts.
               </div>
             </div>
             <div class="chat-input-bar">
-              <input type="text" class="chat-input" id="assistant-input"
-                placeholder="Type your business query here... (e.g. Who are my top customers?)">
+              <input type="text" class="chat-input" id="assistant-input" placeholder="Type your business query here... (e.g. Who are my top customers?)">
               <button class="btn btn-gold" id="btn-send-assistant"><i class="fa-solid fa-paper-plane"></i> Send</button>
             </div>
           </div>
@@ -370,8 +358,7 @@
                 <i class="fa-solid fa-file-pdf"></i> Executive PDF Business Report
               </div>
               <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
-                Generate a comprehensive, branded White & Golden executive PDF report detailing current financials,
-                inventory alert statuses, and top customer metrics.
+                Generate a comprehensive, branded White & Golden executive PDF report detailing current financials, inventory alert statuses, and top customer metrics.
               </p>
               <button class="btn btn-gold" id="btn-download-pdf-report">
                 <i class="fa-solid fa-download"></i> Download Executive PDF Report
@@ -408,8 +395,7 @@
               <i class="fa-solid fa-key"></i> OpenAI LLM API Configuration (Optional)
             </div>
             <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
-              Your platform works 100% out of the box with the built-in AI Analytics Engine. If you wish to connect your
-              OpenAI key for custom LLM query synthesis, enter it below.
+              Your platform works 100% out of the box with the built-in AI Analytics Engine. If you wish to connect your OpenAI key for custom LLM query synthesis, enter it below.
             </p>
             <div class="form-group">
               <label class="form-label">OpenAI API Key</label>
@@ -541,13 +527,11 @@
       <div class="modal-header">
         <h3 class="modal-title">Luxury Invoice Preview</h3>
         <div style="display: flex; gap: 10px;">
-          <button class="btn btn-gold btn-sm" id="btn-print-invoice"><i class="fa-solid fa-print"></i> Download / Print
-            Invoice</button>
+          <button class="btn btn-gold btn-sm" id="btn-print-invoice"><i class="fa-solid fa-print"></i> Download / Print Invoice</button>
           <button class="close-btn" onclick="closeModal('modal-invoice')">&times;</button>
         </div>
       </div>
-      <div id="invoice-printable-container"
-        style="background: #FFF; padding: 24px; border-radius: 12px; border: 1px solid #EBE6DC;">
+      <div id="invoice-printable-container" style="background: #FFF; padding: 24px; border-radius: 12px; border: 1px solid #EBE6DC;">
         <!-- Rendered by JS -->
       </div>
     </div>
@@ -591,5 +575,4 @@
   <script src="js/charts.js"></script>
   <script src="js/app.js"></script>
 </body>
-
 </html>

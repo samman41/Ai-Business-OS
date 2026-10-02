@@ -186,3 +186,29 @@ def generate_customer_ai_summary(customer_id: int, db: Session = Depends(get_db)
     cust.ai_summary = summary
     db.commit()
     return {"ai_summary": summary}
+
+@router.post("/{customer_id}/generate-email")
+def generate_customer_email(customer_id: int, db: Session = Depends(get_db)):
+    cust = db.query(Customer).filter(Customer.id == customer_id).first()
+    if not cust:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    orders = db.query(Order).filter(Order.customer_id == cust.id, Order.status != "Cancelled").all()
+    total_spent = sum(o.total_amount for o in orders)
+    order_count = len(orders)
+
+    # Generate an AI-styled email based on customer data
+    if order_count == 0:
+        email_subject = "Welcome to AURA - Let's get started"
+        email_body = f"Hi {cust.name},\n\nWelcome to AURA! We noticed you recently registered but haven't placed an order yet. We'd love to schedule a quick 15-minute introductory demo to show you how our platform can streamline your business operations.\n\nBest,\nThe AURA AI Team"
+    elif total_spent > 15000:
+        email_subject = "Exclusive VIP Update & Strategic Review"
+        email_body = f"Hi {cust.name},\n\nAs one of our most valued VIP partners (with over ${total_spent:,.2f} in lifetime value), we are offering you an exclusive early look at our Q3 roadmap. We'd love to set up a priority strategic review to align our new features with {cust.company or 'your business'}'s goals.\n\nWarm regards,\nYour Priority Account Manager"
+    else:
+        email_subject = "Unlock more value with AURA"
+        email_body = f"Hi {cust.name},\n\nThank you for your {order_count} past orders with us! We're reaching out to share a tailored recommendation for enterprise software add-ons that perfectly complement your current setup.\n\nBest,\nThe AURA Customer Success Team"
+
+    return {
+        "email_subject": email_subject,
+        "email_body": email_body
+    }
