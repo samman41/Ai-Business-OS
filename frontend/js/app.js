@@ -291,6 +291,25 @@ async function refreshAISummary(id) {
   }
 }
 
+async function draftAIEmail(id) {
+  const container = document.getElementById("ai-email-container");
+  const subjectEl = document.getElementById("ai-email-subject");
+  const bodyEl = document.getElementById("ai-email-body");
+  
+  if (container) container.style.display = "block";
+  if (subjectEl) subjectEl.innerText = "Generating AI Draft...";
+  if (bodyEl) bodyEl.innerText = "Please wait, crafting email...";
+
+  try {
+    const res = await API.generateCustomerEmail(id);
+    if (subjectEl) subjectEl.innerText = res.email_subject;
+    if (bodyEl) bodyEl.innerText = res.email_body;
+  } catch (err) {
+    if (subjectEl) subjectEl.innerText = "Error";
+    if (bodyEl) bodyEl.innerText = "Failed to draft AI email. Please try again later.";
+  }
+}
+
 // -------------------------------------------------------------
 // 3. INVENTORY & REORDER ENGINE
 // -------------------------------------------------------------
