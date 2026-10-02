@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initReportsTab();
   initSettingsTab();
   initModals();
+  initInsightsTab();
 });
 
 // Navigation Handling
@@ -27,7 +28,8 @@ function initNavigation() {
     documents: "AI Document Vault & RAG Index",
     assistant: "AI Business Assistant",
     reports: "Reports & Data Export Hub",
-    settings: "System Settings & API Config"
+    settings: "System Settings & API Config",
+    insights: "AI Strategic Insights"
   };
 
   navItems.forEach(item => {
@@ -211,6 +213,12 @@ async function loadCustomersData(status = "All", search = "") {
         <td>${c.total_orders} orders</td>
         <td>${c.last_order_date}</td>
         <td>
+          <div style="background: #EEE; border-radius: 4px; overflow: hidden; width: 60px; height: 10px; display: inline-block;">
+            <div style="background: ${c.churn_risk > 70 ? 'var(--danger-color)' : (c.churn_risk > 30 ? 'var(--warning-color)' : 'var(--success-color)')}; width: ${c.churn_risk}%; height: 100%;"></div>
+          </div>
+          <span style="font-size: 12px; margin-left: 6px;">${c.churn_risk}%</span>
+        </td>
+        <td>
           <button class="btn btn-outline-gold btn-sm" onclick="openCustomerDetail(${c.id})">
             <i class="fa-solid fa-eye"></i> Profile
           </button>
@@ -245,6 +253,7 @@ async function openCustomerDetail(id) {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <strong style="font-size: 14px; color: var(--text-dark);"><i class="fa-solid fa-brain" style="color: var(--gold-primary);"></i> AI Persona Summary</strong>
           <div style="display: flex; gap: 8px;">
+            <button class="btn btn-outline-gold btn-sm" onclick="draftAIEmail(${c.id}, 'win-back')"><i class="fa-solid fa-heart-crack"></i> Draft Win-back</button>
             <button class="btn btn-outline-gold btn-sm" onclick="draftAIEmail(${c.id})"><i class="fa-solid fa-envelope"></i> Draft AI Email</button>
             <button class="btn btn-outline-gold btn-sm" onclick="refreshAISummary(${c.id})"><i class="fa-solid fa-rotate"></i> Refresh AI</button>
           </div>
@@ -291,7 +300,7 @@ async function refreshAISummary(id) {
   }
 }
 
-async function draftAIEmail(id) {
+async function draftAIEmail(id, type = null) {
   const container = document.getElementById("ai-email-container");
   const subjectEl = document.getElementById("ai-email-subject");
   const bodyEl = document.getElementById("ai-email-body");
@@ -301,7 +310,7 @@ async function draftAIEmail(id) {
   if (bodyEl) bodyEl.innerText = "Please wait, crafting email...";
 
   try {
-    const res = await API.generateCustomerEmail(id);
+    const res = await API.generateCustomerEmail(id, type);
     if (subjectEl) subjectEl.innerText = res.email_subject;
     if (bodyEl) bodyEl.innerText = res.email_body;
   } catch (err) {
@@ -869,4 +878,79 @@ function initModals() {
 function closeModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) modal.classList.remove("active");
+}
+
+// -------------------------------------------------------------
+// 9. AI INSIGHTS
+// -------------------------------------------------------------
+async function initInsightsTab() {
+  const briefingBox = document.getElementById("insights-daily-briefing");
+  const anomaliesBox = document.getElementById("insights-anomalies");
+  const forecastExplanationBox = document.getElementById("insights-forecast-explanation");
+  
+  if (!briefingBox) return; // Not on the page yet or logic guard
+
+  try {
+    const briefing = await API.getDailyBriefing();
+    const actionHtml = briefing.ai_recommended_actions.map(a => `<li>${a}</li>`).join("");
+    if (briefingBox) {
+      briefingBox.innerHTML = `
+        <div style="font-size: 14px; margin-bottom: 12px;">
+          <p><strong>Yesterday's Revenue:</strong> $${briefing.revenue_yesterday.toLocaleString()} (Day Before: $${briefing.revenue_day_before.toLocaleString()})</p>
+          <p><strong>New Customers (24h):</strong> ${briefing.new_customers}</p>
+          <p><strong>At-Risk Customers (90d+ inactive):</strong> ${briefing.at_risk_customers}</p>
+        </div>
+        <strong>AI Recommended Actions:</strong>
+        <ul style="margin-top: 8px; font-size: 13px; color: var(--text-body); padding-left: 20px;">
+          ${actionHtml}
+        </ul>
+      `;
+    }
+
+    const forecast = await API.getForecast();
+    if (forecastExplanationBox) {
+      forecastExplanationBox.innerHTML = `<strong>AI Analysis:</strong> ${forecast.ai_explanation}`;
+    }
+
+    const ctx = document.getElementById('forecastChart');
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Next 30 Days', 'Next 60 Days', 'Next 90 Days'],
+          datasets: [{
+            label: 'Forecasted Revenue ($)',
+            data: [forecast.forecast_30_days, forecast.forecast_60_days, forecast.forecast_90_days],
+            borderColor: '#D4AF37',
+            backgroundColor: 'rgba(212, 175, 55, 0.2)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    const anomalies = await API.getAnomalies();
+    if (anomaliesBox) {
+      if (anomalies.anomalies.length === 0) {
+        anomaliesBox.innerHTML = `<p style="font-size: 14px; color: var(--success-color);"><i class="fa-solid fa-check-circle"></i> No unusual anomalies detected.</p>`;
+      } else {
+        anomaliesBox.innerHTML = anomalies.anomalies.map(a => `
+          <div style="padding: 12px; margin-bottom: 8px; border-left: 4px solid ${a.type === 'Spike' ? 'var(--success-color)' : 'var(--danger-color)'}; background: #FFF; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <strong style="color: var(--text-dark);">${a.date} - ${a.type}</strong><br>
+            <span style="font-size: 13px; color: var(--text-muted);">${a.description}</span>
+          </div>
+        `).join("");
+      }
+    }
+  } catch (err) {
+    console.error("Error loading insights:", err);
+  }
 }

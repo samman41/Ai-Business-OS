@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 
 from database import init_db, SessionLocal, Product
 from seed_data import seed_database
-from routers import dashboard, customers, inventory, sales, documents, ai_assistant, reports
+from routers import dashboard, customers, inventory, sales, documents, ai_assistant, reports, insights
 
 # Initialize App & Tables
 init_db()
@@ -42,6 +42,7 @@ app.include_router(sales.router)
 app.include_router(documents.router)
 app.include_router(ai_assistant.router)
 app.include_router(reports.router)
+app.include_router(insights.router)
 
 @app.get("/api/health")
 def health_check():

@@ -60,6 +60,14 @@ def list_customers(
         total_orders = order_stats.total_orders or 0
         last_order = order_stats.last_order_date.strftime("%Y-%m-%d") if order_stats.last_order_date else "No orders"
 
+        # Calculate Churn Risk Score (0-100)
+        churn_risk = 0
+        if order_stats.last_order_date:
+            days_since = (datetime.utcnow() - order_stats.last_order_date).days
+            churn_risk = min(100, max(0, int((days_since / 90.0) * 100))) # 90 days = 100% risk
+        elif total_orders == 0:
+            churn_risk = 50 # Unknown risk for new users
+
         result.append({
             "id": c.id,
             "name": c.name,
@@ -70,6 +78,7 @@ def list_customers(
             "ltv": round(ltv, 2),
             "total_orders": total_orders,
             "last_order_date": last_order,
+            "churn_risk": churn_risk,
             "initial_balance": c.initial_balance,
             "notes": c.notes,
             "ai_summary": c.ai_summary or "Click generate to build AI persona summary.",
@@ -188,7 +197,7 @@ def generate_customer_ai_summary(customer_id: int, db: Session = Depends(get_db)
     return {"ai_summary": summary}
 
 @router.post("/{customer_id}/generate-email")
-def generate_customer_email(customer_id: int, db: Session = Depends(get_db)):
+def generate_customer_email(customer_id: int, email_type: Optional[str] = None, db: Session = Depends(get_db)):
     cust = db.query(Customer).filter(Customer.id == customer_id).first()
     if not cust:
         raise HTTPException(status_code=404, detail="Customer not found")
@@ -198,7 +207,10 @@ def generate_customer_email(customer_id: int, db: Session = Depends(get_db)):
     order_count = len(orders)
 
     # Generate an AI-styled email based on customer data
-    if order_count == 0:
+    if email_type == "win-back":
+        email_subject = f"We miss you at AURA, {cust.name}!"
+        email_body = f"Hi {cust.name},\n\nIt's been a while since your last order with us. We value your business and would love to welcome you back. We've added several exciting new features to the platform that we think {cust.company or 'your team'} will love.\n\nReply to this email to get a personalized 20% discount on your next order.\n\nWarm regards,\nThe AURA AI Team"
+    elif order_count == 0:
         email_subject = "Welcome to AURA - Let's get started"
         email_body = f"Hi {cust.name},\n\nWelcome to AURA! We noticed you recently registered but haven't placed an order yet. We'd love to schedule a quick 15-minute introductory demo to show you how our platform can streamline your business operations.\n\nBest,\nThe AURA AI Team"
     elif total_spent > 15000:

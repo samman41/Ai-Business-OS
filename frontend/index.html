@@ -45,6 +45,10 @@
           <i class="fa-solid fa-chart-pie"></i>
           <span>Dashboard</span>
         </li>
+        <li class="nav-item" data-tab="insights">
+          <i class="fa-solid fa-lightbulb"></i>
+          <span>AI Insights</span>
+        </li>
         <li class="nav-item" data-tab="customers">
           <i class="fa-solid fa-users"></i>
           <span>Customers</span>
@@ -158,6 +162,7 @@
                     <th>Lifetime Value (LTV)</th>
                     <th>Total Orders</th>
                     <th>Last Order</th>
+                    <th>Churn Risk</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -403,6 +408,38 @@
             </div>
             <button class="btn btn-gold" id="btn-save-api-key">Save Settings</button>
           </div>
+        </section>
+
+        <!-- AI Insights Tab -->
+        <section class="tab-view" id="view-insights">
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+            <!-- Daily Briefing Card -->
+            <div class="card" style="grid-column: span 1;">
+              <div class="card-header">
+                <h2 class="card-title"><i class="fa-solid fa-calendar-day" style="color: var(--gold-primary);"></i> Daily Briefing</h2>
+              </div>
+              <div id="insights-daily-briefing">Loading...</div>
+            </div>
+
+            <!-- Revenue Forecast Chart -->
+            <div class="card" style="grid-column: span 1;">
+              <div class="card-header">
+                <h2 class="card-title"><i class="fa-solid fa-chart-line" style="color: var(--gold-primary);"></i> Revenue Forecast</h2>
+              </div>
+              <canvas id="forecastChart" style="height: 200px; width: 100%;"></canvas>
+              <div id="insights-forecast-explanation" style="margin-top: 15px; font-size: 14px; color: var(--text-muted);"></div>
+            </div>
+          </div>
+
+          <!-- Anomaly Alerts -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title"><i class="fa-solid fa-triangle-exclamation" style="color: var(--gold-primary);"></i> Anomaly Alerts</h2>
+            </div>
+            <div id="insights-anomalies">Loading...</div>
+          </div>
+
         </section>
 
       </div>

@@ -46,8 +46,10 @@ const API = {
     return this.fetchJSON(`${API_BASE}/customers/${id}/generate-summary`, { method: "POST" });
   },
 
-  generateCustomerEmail(id) {
-    return this.fetchJSON(`${API_BASE}/customers/${id}/generate-email`, { method: "POST" });
+  generateCustomerEmail(id, type = null) {
+    let url = `${API_BASE}/customers/${id}/generate-email`;
+    if (type) url += `?email_type=${type}`;
+    return this.fetchJSON(url, { method: "POST" });
   },
 
   createCustomer(data) {
@@ -140,5 +142,16 @@ const API = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ openai_api_key: key })
     });
+  },
+
+  // Insights
+  getDailyBriefing() {
+    return this.fetchJSON(`${API_BASE}/insights/daily-briefing`);
+  },
+  getForecast() {
+    return this.fetchJSON(`${API_BASE}/insights/forecast`);
+  },
+  getAnomalies() {
+    return this.fetchJSON(`${API_BASE}/insights/anomalies`);
   }
 };
